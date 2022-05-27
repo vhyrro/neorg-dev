@@ -24,6 +24,7 @@ end
 
 -- Setup
 vim.g.do_filetype_lua = 1
+vim.g.did_load_filetypes = 0
 
 vim.filetype.add({
 	filename = {
@@ -42,6 +43,7 @@ isolated_environment.post()
 vim.cmd("packadd packer.nvim")
 
 local packer = require('packer')
+local packer_async = require('packer.async')
 
 require('packer').startup(function(use)
 	use {
@@ -50,6 +52,16 @@ require('packer').startup(function(use)
 	}
 
 	if is_fresh_install then
-		packer.sync()
+		-- Yes I do indeed spell colourscheme the bri'ish way
+		if isolated_environment.colourscheme then
+			use {
+				isolated_environment.colourscheme.path,
+				config = function()
+					vim.cmd("colorscheme " .. isolated_environment.colourscheme.name)
+				end,
+			}
+		end
+
+		packer_async.wait(packer.sync())
 	end
 end)
