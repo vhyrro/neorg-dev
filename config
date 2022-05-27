@@ -1,0 +1,26 @@
+template "sane-defaults"
+
+editing {
+	indent = 4
+}
+
+--> Option clusters
+
+-- Neovim Update Intervals
+opt {
+	timeoutlen = 500,
+	ttimeoutlen = 5,
+	updatetime = 100,
+}
+
+-- Splitting behaviour
+opt {
+	splitbelow = true,
+	splitright = true,
+}
+
+opt.inccommand = "split"
+
+opt.virtualedit = "block"
+
+undofile "/home/vhyrro/.cache/nvim/undo"
