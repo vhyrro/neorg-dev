@@ -11,9 +11,8 @@ environment.set = function(what)
 end
 
 environment.template = function(template_name)
-	environment.match(template_name) {
-		["sane-defaults"] = environment.wrap(require, "config.default")
-	}
+	-- TODO: Better errors
+	pcall(require, "templates." .. template_name)
 end
 
 environment.editing = function(options)
@@ -37,12 +36,35 @@ environment.undofile = function(location)
 	environment.opt.undodir = location
 end
 
+environment.colorscheme = function(path, name)
+	environment.state.colourscheme = {
+		path = path,
+		name = name,
+	}
+end
+
+environment.colourscheme = environment.colorscheme
+
 environment.post = function()
+	local augroup = vim.api.nvim_create_augroup("NeorgDev", {})
+
 	vim.api.nvim_create_autocmd("BufEnter", {
+		group = augroup,
 		callback = function(data)
 			if environment.state.undofile then
 				vim.api.nvim_buf_set_option(data.buf, "undofile", true)
 			end
+		end
+	})
+
+	vim.api.nvim_create_autocmd("BufWritePost", {
+		group = augroup,
+		pattern = vim.fn.stdpath("config") .. "/user/*.lua",
+		callback = function()
+			require("config.setup")()
+
+			local p = require("packer")
+			require("utils").packer_command_chain(p.clean, p.install, p.compile)
 		end
 	})
 end

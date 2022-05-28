@@ -1,4 +1,4 @@
-template "sane-defaults"
+template "default"
 
 editing {
 	indent = 4
@@ -23,4 +23,10 @@ opt.inccommand = "split"
 
 opt.virtualedit = "block"
 
+--> Store undo information persistently under the following directory
 undofile "/home/vhyrro/.cache/nvim/undo"
+
+--> Colourscheme setup
+
+colorscheme("rebelot/kanagawa.nvim", "kanagawa")
+-- colorscheme("sainnhe/gruvbox-material", "gruvbox-material")
