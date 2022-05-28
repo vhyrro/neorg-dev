@@ -45,6 +45,18 @@ end
 
 environment.colourscheme = environment.colorscheme
 
+environment.keybinds = function(keybinds)
+	for _, keybind_data in ipairs(keybinds) do
+		for _, keymap in ipairs(keybind_data.keymaps) do
+			if keybind_data.remove then
+				vim.keymap.del(keybind_data.modes, keymap)
+			else
+				vim.keymap.set(keybind_data.modes, keymap, keybind_data.rhs)
+			end
+		end
+	end
+end
+
 environment.post = function()
 	local augroup = vim.api.nvim_create_augroup("NeorgDev", {})
 

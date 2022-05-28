@@ -4,8 +4,62 @@ return function(is_fresh_install)
 	package.loaded["config.environment"] = nil
 	local isolated_environment = require("config.environment")
 
+	local string_metatable = debug.getmetatable("")
+	local old_string_metatable = vim.deepcopy(string_metatable)
+
+	string_metatable.__div = function(a, b) 
+		if type(a) == "string" then
+			local keymaps = (type(b) == "string" and { b } or b)
+			local modes = {}
+
+			for mode in a:gmatch("%w") do
+				table.insert(modes, mode)
+			end
+
+			return setmetatable({
+				modes = modes,
+				keymaps = keymaps,
+			}, {
+				__div = string_metatable.__div,
+			})
+		elseif type(a) == "table" and a.modes and a.keymaps then
+			a.rhs = b
+			return a
+		else
+			-- error
+			return {}
+		end
+	end
+
+	string_metatable.__sub = function(a, b)
+		local keymaps = (type(b) == "string" and { b } or b)
+		local modes = {}
+
+		for mode in a:gmatch("%w") do
+			table.insert(modes, mode)
+		end
+
+		return {
+			modes = modes,
+			keymaps = keymaps,
+			remove = true,
+		}
+	end
+
+	string_metatable.__unm = function(a)
+		return {
+			keymaps = { a },
+			modes = "",
+			remove = true,
+		}
+	end
+
+	debug.setmetatable("", string_metatable)
+
 	-- Run the user configuration
 	setfenv(isolated_environment.wrap(dofile, config_path .. "/user/init.lua"), setmetatable(_G, { __index = isolated_environment }))()
+
+	debug.setmetatable("", old_string_metatable)
 
 	-- Run post scripts
 	isolated_environment.post()

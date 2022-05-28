@@ -8,7 +8,7 @@ do
 	if vim.fn.isdirectory(install_dir) == 0 then
 		vim.notify("Packer isn't installed! Setting it up...")
 
-		vim.fn.delete(config_path .. "/plugin", "rf")
+		vim.fn.delete(config_path .. "/plugin/packer_compiled.lua")
 		vim.fn.system({"git", "clone", "--depth", "1", "https://github.com/wbthomason/packer.nvim", install_dir .. "/opt/packer.nvim"})
 
 		if vim.v.shell_error == 0 then
@@ -23,7 +23,7 @@ end
 
 --> Set up functions specifically made for the user configuration
 
--- Setup
+-- Enable filetype.lua / disable filetype.vim
 vim.g.do_filetype_lua = 1
 vim.g.did_load_filetypes = 0
 
