@@ -1,22 +1,23 @@
 template "default"
 
 editing {
-	indent = 4,
+    indent = 4,
+    spaces = true,
 }
 
 --> Option clusters
 
 -- Neovim Update Intervals
 opt {
-	timeoutlen = 500,
-	ttimeoutlen = 5,
-	updatetime = 100,
+    timeoutlen = 500,
+    ttimeoutlen = 5,
+    updatetime = 100,
 }
 
 -- Splitting behaviour
 opt {
-	splitbelow = true,
-	splitright = true,
+    splitbelow = true,
+    splitright = true,
 }
 
 --> Set <Leader> to <Space>
