@@ -76,4 +76,24 @@ utilities.wrap = function(function_pointer, ...)
     end
 end
 
+--- Maps a function to every element of a table
+--  The function can return a value, in which case that specific element will be assigned
+--  the return value of that function.
+---@param tbl table #The table to iterate over
+---@param callback function #The callback that should be invoked on every iteration
+---@return table #A modified version of the original `tbl`.
+utilities.map = function(tbl, callback)
+    local copy = vim.deepcopy(tbl)
+
+    for k, v in pairs(tbl) do
+        local cb = callback(k, v, tbl)
+
+        if cb then
+            copy[k] = cb
+        end
+    end
+
+    return copy
+end
+
 return utilities

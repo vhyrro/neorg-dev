@@ -3,6 +3,10 @@ return function(is_fresh_install)
 
     package.loaded["config.environment"] = nil
     local isolated_environment = require("config.environment")
+    -- TODO: Document why we leak this out into the global namespace
+    _G.neorg_dev = {
+        state = isolated_environment.state,
+    }
 
     local string_metatable = debug.getmetatable("")
     local old_string_metatable = vim.deepcopy(string_metatable)
@@ -86,14 +90,17 @@ return function(is_fresh_install)
         autoremove = true
     })
 
-    packer.startup(function(use)
+    packer.startup(function(packer_use)
+        local use = function(...)
+            packer_use(...)
+            isolated_environment.state.plugin_count = isolated_environment.state.plugin_count + 1
+        end
+
+        isolated_environment.state.plugin_count = 0
+
         use {
             "wbthomason/packer.nvim",
             opt = true,
-        }
-
-        use {
-            "nvim-neorg/neorg"
         }
 
         -- Yes I do indeed spell colourscheme the bri'ish way
@@ -101,6 +108,22 @@ return function(is_fresh_install)
             use {
                 isolated_environment.state.colourscheme.path,
                 config = "vim.cmd 'colorscheme " .. isolated_environment.state.colourscheme.name .. "'",
+            }
+        end
+
+        if isolated_environment.state.treesitter_language_list then
+            use {
+                "nvim-treesitter/nvim-treesitter",
+                run = ":TSUpdate",
+                config = function()
+                    require("nvim-treesitter.configs").setup({
+                        ensure_installed = _G.neorg_dev.state.treesitter_language_list,
+
+                        highlight = {
+                            enable = true,
+                        }
+                    })
+                end
             }
         end
 

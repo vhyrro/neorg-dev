@@ -58,6 +58,18 @@ environment.keybinds = function(keybinds)
     end
 end
 
+environment.languages = function(language_list)
+    environment.state.treesitter_language_list = environment.state.treesitter_language_list or {}
+    environment.state.lsp_language_list = environment.state.lsp_language_list or {}
+
+    for _, language in ipairs(language_list) do
+        if type(language) == "string" then
+            table.insert(environment.state.treesitter_language_list, language)
+            -- TODO: Create mappings of language names to LSPs
+        end
+    end
+end
+
 environment.post = function()
     local augroup = vim.api.nvim_create_augroup("NeorgDev", {})
 
@@ -74,10 +86,13 @@ environment.post = function()
         group = augroup,
         pattern = vim.fn.stdpath("config") .. "/user/*.lua",
         callback = function()
+            local old_plugin_count = environment.state.plugin_count
+
             require("config.setup")()
 
-            local p = require("packer")
-            require("utils").packer_command_chain(p.clean, p.install, p.compile)
+            if environment.state.plugin_count ~= old_plugin_count then
+                require("packer").sync()
+            end
         end
     })
 end

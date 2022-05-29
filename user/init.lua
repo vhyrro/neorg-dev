@@ -39,3 +39,10 @@ colorscheme("rebelot/kanagawa.nvim", "kanagawa")
 keybinds {
    ("n" / "<C-c>" / ":bd<CR>" +silent) % "closes the current buffer",
 }
+
+-- languages "all"
+languages {
+    "lua",
+    "cpp",
+    "javascript",
+}
