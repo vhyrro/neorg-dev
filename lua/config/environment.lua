@@ -49,7 +49,10 @@ environment.colourscheme = environment.colorscheme
 environment.keybinds = function(keybinds)
     for _, keybind_data in ipairs(keybinds) do
         for _, keymap in ipairs(keybind_data.keymaps) do
-            if keybind_data.remove then
+            if keybind_data.swap then
+                vim.keymap.set(keybind_data.modes, keymap, keybind_data.swap, keybind_data.attributes)
+                vim.keymap.set(keybind_data.modes, keybind_data.swap, keymap, keybind_data.attributes)
+            elseif keybind_data.remove then
                 vim.keymap.del(keybind_data.modes, keymap)
             else
                 vim.keymap.set(keybind_data.modes, keymap, keybind_data.rhs, keybind_data.attributes)
@@ -88,9 +91,14 @@ environment.post = function()
         callback = function()
             local old_plugin_count = environment.state.plugin_count
 
-            require("config.setup")()
+            local ok, err = pcall(require("config.setup"))
 
-            if environment.state.plugin_count ~= old_plugin_count then
+            if not ok then
+                vim.api.nvim_err_writeln(err)
+                return
+            end
+
+            if old_plugin_count and environment.state.plugin_count ~= old_plugin_count then
                 require("packer").sync()
             end
         end

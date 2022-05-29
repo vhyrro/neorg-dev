@@ -2,7 +2,9 @@ return function(is_fresh_install)
     local config_path = vim.fn.stdpath("config")
 
     package.loaded["config.environment"] = nil
+
     local isolated_environment = require("config.environment")
+
     -- TODO: Document why we leak this out into the global namespace
     _G.neorg_dev = {
         state = isolated_environment.state,
@@ -13,18 +15,22 @@ return function(is_fresh_install)
 
     string_metatable.__div = function(a, b)
         if type(a) == "string" then
-            local keymaps = (type(b) == "string" and { b } or b)
+            local keymaps = (type(b) == "string" and { b })
             local modes = {}
 
             for mode in a:gmatch("%w") do
                 table.insert(modes, mode)
             end
 
-            return setmetatable({
+            return setmetatable(keymaps and {
                 modes = modes,
                 keymaps = keymaps,
                 attributes = {},
-            }, {
+            } or vim.tbl_deep_extend("force", {
+                modes = modes,
+                attributes = {},
+                keymaps = {}
+            }, b), {
                 __add = string_metatable.__add,
                 __div = string_metatable.__div,
                 __mod = string_metatable.__mod,
@@ -68,6 +74,13 @@ return function(is_fresh_install)
             keymaps = { a },
             modes = "",
             remove = true,
+        }
+    end
+
+    string_metatable.__pow = function(a, b)
+        return {
+            keymaps = (type(a) == "string" and { a } or a),
+            swap = b,
         }
     end
 

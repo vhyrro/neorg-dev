@@ -38,9 +38,13 @@ colorscheme("rebelot/kanagawa.nvim", "kanagawa")
 --> Keybinds
 keybinds {
    ("n" / "<C-c>" / ":bd<CR>" +silent) % "closes the current buffer",
+   ("n" / "<C-n>" / ":bn<CR>" +silent) % "cycles to the next buffer",
+   ("n" / "<C-p>" / ":bp<CR>" +silent) % "cycles to the previous buffer",
+
+   ("n" / ":" ^ ";" +noremap),
 }
 
--- languages "all"
+-- TODO: languages "all"
 languages {
     "lua",
     "cpp",

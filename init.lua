@@ -16,7 +16,7 @@ do
             vim.notify("Packer set up successfully!")
         else
             vim.notify("Failed to install packer (make this error message better in the future)")
-            os.exit(-1)
+            return -1
         end
     end
 end
