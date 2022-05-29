@@ -52,7 +52,7 @@ environment.keybinds = function(keybinds)
             if keybind_data.remove then
                 vim.keymap.del(keybind_data.modes, keymap)
             else
-                vim.keymap.set(keybind_data.modes, keymap, keybind_data.rhs)
+                vim.keymap.set(keybind_data.modes, keymap, keybind_data.rhs, keybind_data.attributes)
             end
         end
     end
@@ -96,5 +96,11 @@ environment.opt = setmetatable({}, {
 
 environment.g = vim.g
 environment.b = vim.opt_local
+
+environment.silent = "silent"
+environment.expr = "expr"
+environment.script = "script"
+environment.nowait = "nowait"
+environment.noremap = "noremap"
 
 return environment

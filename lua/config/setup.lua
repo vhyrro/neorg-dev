@@ -19,8 +19,11 @@ return function(is_fresh_install)
             return setmetatable({
                 modes = modes,
                 keymaps = keymaps,
+                attributes = {},
             }, {
+                __add = string_metatable.__add,
                 __div = string_metatable.__div,
+                __mod = string_metatable.__mod,
             })
         elseif type(a) == "table" and a.modes and a.keymaps then
             a.rhs = b
@@ -29,6 +32,16 @@ return function(is_fresh_install)
             -- error
             return {}
         end
+    end
+
+    string_metatable.__add = function(a, b)
+        a.attributes[b] = true
+        return a
+    end
+
+    string_metatable.__mod = function(a, b)
+        a.attributes.desc = b
+        return a
     end
 
     string_metatable.__sub = function(a, b)

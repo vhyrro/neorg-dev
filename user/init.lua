@@ -36,4 +36,6 @@ undofile "/home/vhyrro/.cache/nvim/undo"
 colorscheme("rebelot/kanagawa.nvim", "kanagawa")
 
 --> Keybinds
-keybinds {}
+keybinds {
+   ("n" / "<C-c>" / ":bd<CR>" +silent) % "closes the current buffer",
+}
