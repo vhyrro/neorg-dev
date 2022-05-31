@@ -86,8 +86,17 @@ return function(is_fresh_install)
 
     debug.setmetatable("", string_metatable)
 
-    -- Run the user configuration
-    setfenv(isolated_environment.wrap(dofile, config_path .. "/user/init.lua"), setmetatable(_G, { __index = isolated_environment }))()
+    --> Run the user configuration
+    -- NOTE: `setfenv` does not work as intended here and always breaks. To
+    -- combat this, we're globally setting _G's metatable here temporarily
+    -- instead.
+    setmetatable(_G, { __index = isolated_environment })
+
+    dofile(config_path .. "/user/init.lua")
+
+    -- Reset the global variable's metatable to not accidentally leak globals
+    -- into other parts of code.
+    setmetatable(_G, nil)
 
     debug.setmetatable("", old_string_metatable)
 

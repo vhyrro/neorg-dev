@@ -1,5 +1,10 @@
 template "default"
 
+--> Imports
+import "plugins" {
+    "neorg",
+}
+
 editing {
     indent = 4,
     spaces = true,
@@ -41,6 +46,8 @@ keybinds {
    ("n" / "<C-n>" / ":bn<CR>" +silent) % "cycles to the next buffer",
    ("n" / "<C-p>" / ":bp<CR>" +silent) % "cycles to the previous buffer",
 
+   ("n" / "<Esc>" / ":noh<CR>" +silent) % "clears search highlights",
+
    ("n" / ":" ^ ";" +noremap),
 }
 
@@ -50,3 +57,5 @@ languages {
     "cpp",
     "javascript",
 }
+
+-- neorg {}

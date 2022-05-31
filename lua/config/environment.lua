@@ -73,6 +73,37 @@ environment.languages = function(language_list)
     end
 end
 
+environment.import = function(file_or_prefix)
+    local ok, module = pcall(require, file_or_prefix)
+
+    local function override_global_metatable(contents)
+        local global_metatable = getmetatable(_G)
+
+        global_metatable.__index = vim.tbl_deep_extend("error", global_metatable.__index, contents)
+    end
+
+    if not ok then
+        return function(modules)
+            for _, module_name in ipairs(modules) do
+                module = require(file_or_prefix .. "." .. module_name)
+                override_global_metatable(module)
+            end
+        end
+    end
+
+    override_global_metatable(module)
+end
+
+environment.plugin = function(name)
+    return setmetatable({
+        name = name,
+    }, {
+        __call = function(data)
+            packer_data = data
+        end,
+    })
+end
+
 environment.post = function()
     local augroup = vim.api.nvim_create_augroup("NeorgDev", {})
 
