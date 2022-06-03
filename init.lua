@@ -15,6 +15,7 @@ do
             is_fresh_install = true
             vim.notify("Packer set up successfully!")
         else
+            vim.fn.delete(install_dir, "rf")
             vim.notify("Failed to install packer (make this error message better in the future)")
             return -1
         end
@@ -26,12 +27,6 @@ end
 -- Enable filetype.lua / disable filetype.vim
 vim.g.do_filetype_lua = 1
 vim.g.did_load_filetypes = 0
-
-vim.filetype.add({
-    filename = {
-        [config_path .. "/user/init.lua"] = "lua",
-    }
-})
 
 -- Make `user/` part of the lua path
 package.path = package.path .. ";" .. config_path .. "/user/?.lua;" .. config_path .. "/user/?/init.lua;"

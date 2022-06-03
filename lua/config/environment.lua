@@ -1,6 +1,13 @@
 local environment = require("config.utilities")
 
+-- local function update_environment()
+--     local global_metatable = getmetatable(_G)
+-- 
+--     global_metatable.__index = vim.tbl_deep_extend("error", global_metatable.__index, environment)
+-- end
+
 environment.state = {}
+environment.plugins = {}
 
 environment.set = function(what)
     if vim.startswith(what, "no") then
@@ -95,13 +102,30 @@ environment.import = function(file_or_prefix)
 end
 
 environment.plugin = function(name)
+    if environment.plugins[name] then
+        return environment.plugins[name]
+    end
+
+    _G.neorg_dev.plugin_data[name] = {}
+
     return setmetatable({
         name = name,
+        packer_data = {},
+        data = {},
+        active = false,
     }, {
-        __call = function(data)
-            packer_data = data
+        __call = function(self, data)
+            self = vim.tbl_deep_extend("force", self, data)
+            _G.neorg_dev.plugin_data[name] = self.data
+            return self
         end,
     })
+end
+
+environment.make_plugin = function(plugin, packer_data)
+    plugin.packer_data = packer_data
+    plugin.active = true
+    environment.plugins[plugin.name] = plugin
 end
 
 environment.post = function()
@@ -116,11 +140,11 @@ environment.post = function()
         end
     })
 
-    vim.api.nvim_create_autocmd("BufWritePost", {
+    vim.api.nvim_create_autocmd({ "BufWritePost", "VimEnter" }, {
         group = augroup,
         pattern = vim.fn.stdpath("config") .. "/user/*.lua",
         callback = function()
-            local old_plugin_count = environment.state.plugin_count
+            local old_plugin_count = vim.tbl_count(environment.plugins)
 
             local ok, err = pcall(require("config.setup"))
 
@@ -129,8 +153,15 @@ environment.post = function()
                 return
             end
 
-            if old_plugin_count and environment.state.plugin_count ~= old_plugin_count then
-                require("packer").sync()
+            local current_plugin_count = vim.tbl_count(environment.plugins)
+            local packer_plugin_count = vim.tbl_count(_G.packer_plugins)
+            local packer = require("packer")
+
+            if current_plugin_count > old_plugin_count or current_plugin_count > packer_plugin_count then
+                packer.sync()
+            elseif current_plugin_count < old_plugin_count or current_plugin_count < packer_plugin_count then
+                packer.clean()
+                packer.compile()
             end
         end
     })

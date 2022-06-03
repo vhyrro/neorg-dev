@@ -1,9 +1,7 @@
 template "default"
 
 --> Imports
-import "plugins" {
-    "neorg",
-}
+import "plugins.neorg"
 
 editing {
     indent = 4,
@@ -34,6 +32,9 @@ opt.inccommand = "split"
 --> Enable virtualedit only when in visual block mode
 opt.virtualedit = "block"
 
+--> Don't autoclose folds
+opt.foldlevel = 999
+
 --> Store undo information persistently under the following directory
 undofile "/home/vhyrro/.cache/nvim/undo"
 
@@ -42,11 +43,14 @@ colorscheme("rebelot/kanagawa.nvim", "kanagawa")
 
 --> Keybinds
 keybinds {
-   ("n" / "<C-c>" / ":bd<CR>" +silent) % "closes the current buffer",
-   ("n" / "<C-n>" / ":bn<CR>" +silent) % "cycles to the next buffer",
-   ("n" / "<C-p>" / ":bp<CR>" +silent) % "cycles to the previous buffer",
+   ("n" / "<C-c>" / "<cmd>bd<CR>" +silent) % "closes the current buffer",
+   ("n" / "<C-n>" / "<cmd>bn<CR>" +silent) % "cycles to the next buffer",
+   ("n" / "<C-p>" / "<cmd>bp<CR>" +silent) % "cycles to the previous buffer",
 
-   ("n" / "<Esc>" / ":noh<CR>" +silent) % "clears search highlights",
+   ("n" / "<C-h>" / "<C-w>h" +noremap) % "moves to the leftside split",
+   ("n" / "<C-l>" / "<C-w>l" +noremap) % "moves to the rightside split",
+
+   ("n" / "<Esc>" / "<cmd>noh<CR>" +silent) % "clears search highlights",
 
    ("n" / ":" ^ ";" +noremap),
 }
@@ -58,4 +62,20 @@ languages {
     "javascript",
 }
 
--- neorg {}
+neorg_setup {
+    path = "~/dev/neorg/",
+
+    modules = {
+        ["core.defaults"] = {},
+        ["core.norg.concealer"] = {},
+    },
+
+    workspaces = {
+        main = "~/neorg/",
+    },
+}
+
+make_plugin(plugin "playground", {
+    "nvim-treesitter/playground",
+    cmd = "TSPlaygroundToggle",
+})

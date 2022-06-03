@@ -8,6 +8,7 @@ return function(is_fresh_install)
     -- TODO: Document why we leak this out into the global namespace
     _G.neorg_dev = {
         state = isolated_environment.state,
+        plugin_data = {},
     }
 
     local string_metatable = debug.getmetatable("")
@@ -112,29 +113,25 @@ return function(is_fresh_install)
         autoremove = true
     })
 
-    packer.startup(function(packer_use)
-        local use = function(...)
-            packer_use(...)
-            isolated_environment.state.plugin_count = isolated_environment.state.plugin_count + 1
-        end
+    packer.startup(function(use)
+        local make_plugin = isolated_environment.make_plugin
+        local plugin = isolated_environment.plugin
 
-        isolated_environment.state.plugin_count = 0
-
-        use {
+        make_plugin(plugin "packer.nvim", {
             "wbthomason/packer.nvim",
             opt = true,
-        }
+        })
 
         -- Yes I do indeed spell colourscheme the bri'ish way
         if isolated_environment.state.colourscheme then
-            use {
+            make_plugin(plugin(isolated_environment.state.colourscheme.name), {
                 isolated_environment.state.colourscheme.path,
                 config = "vim.cmd 'colorscheme " .. isolated_environment.state.colourscheme.name .. "'",
-            }
+            })
         end
 
         if isolated_environment.state.treesitter_language_list then
-            use {
+            make_plugin(plugin "nvim-treesitter", {
                 "nvim-treesitter/nvim-treesitter",
                 run = ":TSUpdate",
                 config = function()
@@ -146,7 +143,11 @@ return function(is_fresh_install)
                         }
                     })
                 end
-            }
+            })
+        end
+
+        for name, plugin_data in pairs(isolated_environment.plugins) do
+            use(vim.tbl_deep_extend("keep", plugin_data.packer_data, { as = name }))
         end
 
         if is_fresh_install then
@@ -155,7 +156,12 @@ return function(is_fresh_install)
                 once = true,
 
                 callback = function()
-                    vim.notify("Plugins installed")
+                    -- TODO: Do we need this?
+                    -- for name in pairs(isolated_environment.plugins) do
+                    --     vim.cmd("silent packadd " .. name)
+                    -- end
+
+                    vim.notify("Plugins have been installed - a restart of Neovim is heavily recommended.")
                 end,
             })
 
