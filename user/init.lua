@@ -2,6 +2,7 @@ template "default"
 
 --> Imports
 import "plugins.neorg"
+import "core.languages"
 
 editing {
     indent = 4,
@@ -36,7 +37,7 @@ opt.virtualedit = "block"
 opt.foldlevel = 999
 
 --> Store undo information persistently under the following directory
-undofile "/home/vhyrro/.cache/nvim/undo"
+undofile(vim.fn.stdpath("cache") .. "/nvim/undo")
 
 --> Colourscheme setup
 colorscheme("rebelot/kanagawa.nvim", "kanagawa")
@@ -57,9 +58,9 @@ keybinds {
 
 -- TODO: languages "all"
 languages {
-    "lua",
-    "cpp",
-    "javascript",
+    "lua", -- Chad level 999 (plus one to account for one based indexing)
+    "cpp", -- Where did my borrow checker go
+    "javascript", -- For Treesitter development, don't be mad at me
 }
 
 neorg_setup {
@@ -67,7 +68,13 @@ neorg_setup {
 
     modules = {
         ["core.defaults"] = {},
-        ["core.norg.concealer"] = {},
+        ["core.export"] = {},
+        ["core.export.markdown"] = {
+            config = {
+                extensions = "all",
+            },
+        },
+        -- ["core.norg.concealer"] = {},
     },
 
     workspaces = {

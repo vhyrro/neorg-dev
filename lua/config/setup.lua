@@ -130,24 +130,8 @@ return function(is_fresh_install)
             })
         end
 
-        if isolated_environment.state.treesitter_language_list then
-            make_plugin(plugin "nvim-treesitter", {
-                "nvim-treesitter/nvim-treesitter",
-                run = ":TSUpdate",
-                config = function()
-                    require("nvim-treesitter.configs").setup({
-                        ensure_installed = _G.neorg_dev.state.treesitter_language_list,
-
-                        highlight = {
-                            enable = true,
-                        }
-                    })
-                end
-            })
-        end
-
         for name, plugin_data in pairs(isolated_environment.plugins) do
-            use(vim.tbl_deep_extend("keep", plugin_data.packer_data, { as = name }))
+            use(vim.tbl_deep_extend("keep", plugin_data.packer_data, { as = (plugin_data.name ~= name and name) }))
         end
 
         if is_fresh_install then

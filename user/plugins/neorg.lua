@@ -37,12 +37,10 @@ return {
         make_plugin(neorg, {
             options.path or "nvim-neorg/neorg",
             after = "nvim-treesitter",
-            requires = "plenary.nvim",
+            requires = { "plenary.nvim" },
             config = function()
                 require("neorg").setup({
-                    load = neorg_dev.plugin_data.neorg.modules or {
-                        ["core.defaults"] = {},
-                    }
+                    load = neorg_dev.plugin_data.neorg.modules
                 })
             end,
         })

@@ -68,18 +68,6 @@ environment.keybinds = function(keybinds)
     end
 end
 
-environment.languages = function(language_list)
-    environment.state.treesitter_language_list = environment.state.treesitter_language_list or {}
-    environment.state.lsp_language_list = environment.state.lsp_language_list or {}
-
-    for _, language in ipairs(language_list) do
-        if type(language) == "string" then
-            table.insert(environment.state.treesitter_language_list, language)
-            -- TODO: Create mappings of language names to LSPs
-        end
-    end
-end
-
 environment.import = function(file_or_prefix)
     local ok, module = pcall(require, file_or_prefix)
 
@@ -140,10 +128,14 @@ environment.post = function()
         end
     })
 
-    vim.api.nvim_create_autocmd({ "BufWritePost", "VimEnter" }, {
+    vim.api.nvim_create_autocmd("BufWritePost", {
         group = augroup,
-        pattern = vim.fn.stdpath("config") .. "/user/*.lua",
+        pattern = vim.fn.stdpath("config") .. "/user/**.lua",
         callback = function()
+            if not _G.packer_plugins then
+                return
+            end
+
             local old_plugin_count = vim.tbl_count(environment.plugins)
 
             local ok, err = pcall(require("config.setup"))
@@ -164,6 +156,26 @@ environment.post = function()
                 packer.compile()
             end
         end
+    })
+
+    vim.api.nvim_create_autocmd("VimEnter", {
+        group = augroup,
+        callback = function()
+            if not _G.packer_plugins then
+                return
+            end
+
+            local current_plugin_count = vim.tbl_count(environment.plugins)
+            local packer_plugin_count = vim.tbl_count(_G.packer_plugins)
+            local packer = require("packer")
+
+            if current_plugin_count > packer_plugin_count then
+                packer.sync()
+            elseif current_plugin_count < packer_plugin_count then
+                packer.clean()
+                packer.compile()
+            end
+        end,
     })
 end
 
