@@ -1,3 +1,7 @@
+import "core.option_wrappers" {
+    "undofile",
+}
+
 set "number"
 set "relativenumber"
 

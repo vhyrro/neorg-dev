@@ -1,21 +1,7 @@
 local environment = require("config.utilities")
 
--- local function update_environment()
---     local global_metatable = getmetatable(_G)
--- 
---     global_metatable.__index = vim.tbl_deep_extend("error", global_metatable.__index, environment)
--- end
-
 environment.state = {}
 environment.plugins = {}
-
-environment.set = function(what)
-    if vim.startswith(what, "no") then
-        vim.opt[what:sub(3)] = false
-    else
-        vim.opt[what] = true
-    end
-end
 
 environment.template = function(template_name)
     -- TODO: Better errors
@@ -37,11 +23,6 @@ environment.editing = function(options)
             spaces = set_options({ "expandtab" }, value)
         }
     end
-end
-
-environment.undofile = function(location)
-    state.undofile = true
-    environment.opt.undodir = location
 end
 
 environment.colorscheme = function(path, name)
@@ -77,16 +58,16 @@ environment.import = function(file_or_prefix)
         global_metatable.__index = vim.tbl_deep_extend("error", global_metatable.__index, contents)
     end
 
-    if not ok then
-        return function(modules)
-            for _, module_name in ipairs(modules) do
-                module = require(file_or_prefix .. "." .. module_name)
-                override_global_metatable(module)
-            end
-        end
+    if ok then
+        override_global_metatable(module)
     end
 
-    override_global_metatable(module)
+    return function(modules)
+        for _, module_name in ipairs(modules) do
+            module = require(file_or_prefix .. "." .. module_name)
+            override_global_metatable(module)
+        end
+    end
 end
 
 environment.plugin = function(name)
@@ -178,21 +159,6 @@ environment.post = function()
         end,
     })
 end
-
--- TODO: make these proper wrappers with proper errors
-environment.opt = setmetatable({}, {
-    __index = vim.opt,
-    __newindex = vim.opt,
-
-    __call = function(_, options)
-        for key, value in pairs(options) do
-            vim.opt[key] = value
-        end
-    end
-})
-
-environment.g = vim.g
-environment.b = vim.opt_local
 
 environment.silent = "silent"
 environment.expr = "expr"
