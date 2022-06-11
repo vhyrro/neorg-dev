@@ -110,7 +110,7 @@ return function(is_fresh_install)
     local packer_async = require('packer.async')
 
     packer.init({
-        autoremove = true
+        autoremove = true,
     })
 
     packer.startup(function(use)

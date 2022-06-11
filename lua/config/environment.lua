@@ -3,9 +3,14 @@ local environment = require("config.utilities")
 environment.state = {}
 environment.plugins = {}
 
+environment.require = function(module_path)
+    package.loaded[module_path] = nil
+    return require(module_path)
+end
+
 environment.template = function(template_name)
     -- TODO: Better errors
-    pcall(require, "templates." .. template_name)
+    pcall(environment.require, "templates." .. template_name)
 end
 
 environment.editing = function(options)
@@ -50,7 +55,7 @@ environment.keybinds = function(keybinds)
 end
 
 environment.import = function(file_or_prefix)
-    local ok, module = pcall(require, file_or_prefix)
+    local ok, module = pcall(environment.require, file_or_prefix)
 
     local function override_global_metatable(contents)
         local global_metatable = getmetatable(_G)
@@ -64,7 +69,7 @@ environment.import = function(file_or_prefix)
 
     return function(modules)
         for _, module_name in ipairs(modules) do
-            module = require(file_or_prefix .. "." .. module_name)
+            module = environment.require(file_or_prefix .. "." .. module_name)
             override_global_metatable(module)
         end
     end

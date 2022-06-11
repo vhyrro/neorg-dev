@@ -1,8 +1,8 @@
 template "default"
 
 --> Imports
-import "plugins.neorg"
 import "core.languages"
+import "plugins.neorg"
 
 editing {
     indent = 4,
