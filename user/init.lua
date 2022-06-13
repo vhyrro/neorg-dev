@@ -1,7 +1,8 @@
-template "default"
+--> Core Imports
+import "core"
+import "core.integrations"
 
---> Imports
-import "core.languages"
+--> Import
 import "plugins.neorg"
 
 editing {
@@ -9,7 +10,37 @@ editing {
     spaces = true,
 }
 
---> Option clusters
+--------------------------------------> BASIC OPTIONS <--------------------------------------
+
+-- `set` is used to simply toggle an option on/off.
+-- It's syntax sugar for `opt.option = true` or `opt.option = false`
+--
+-- To enable an option, simply type `set "optionname"`
+-- To disable an option, type `set "nooptionname"`
+
+-- Enable line numbers for buffers
+set "number"
+
+-- Make the line numbers relative
+set "relativenumber"
+
+-- Make horizontal splits show up at the bottom of the screen by default.
+set "splitbelow"
+
+-- Make vertical splits show up on the right of the screen by default.
+set "splitright"
+
+-- Disable wrapping (usually not good for coding, useful for writing though)
+set "nowrap"
+
+-- Enables richer colouring for terminals that support it (this assumes you have
+-- a fairly modern terminal emulator)
+set "termguicolors"
+
+-- Make Neovim case-insensitive (applies to many places, including search, completions etc.)
+set "ignorecase"
+
+--------------------------------------> OPTION CLUSTERS <--------------------------------------
 
 -- Neovim Update Intervals
 opt {
@@ -24,6 +55,8 @@ opt {
     splitright = true,
 }
 
+------------------------------------------------------------------------------------------------
+
 --> Set <Leader> to <Space>
 g.mapleader = " "
 
@@ -37,23 +70,31 @@ opt.virtualedit = "block"
 opt.foldlevel = 999
 
 --> Store undo information persistently under the following directory
-undofile(vim.fn.stdpath("cache") .. "/nvim/undo")
+undofile (vim.fn.stdpath("cache") .. "/nvim/undo")
 
 --> Colourscheme setup
-colorscheme("rebelot/kanagawa.nvim", "kanagawa")
+colorscheme ("rebelot/kanagawa.nvim", "kanagawa")
+
+--> Enable `neorg-dev` integrations with this init.lua file
+integrations "all"
+
+integrations_highlights {
+    sections = "TSStrong",
+    annotations = "TSUnderline",
+}
 
 --> Keybinds
 keybinds {
-   ("n" / "<C-c>" / "<cmd>bd<CR>" +silent) % "closes the current buffer",
-   ("n" / "<C-n>" / "<cmd>bn<CR>" +silent) % "cycles to the next buffer",
-   ("n" / "<C-p>" / "<cmd>bp<CR>" +silent) % "cycles to the previous buffer",
+    ("n" / "<C-c>" / "<cmd>bd<CR>" +silent) % "closes the current buffer",
+    ("n" / "<C-n>" / "<cmd>bn<CR>" +silent) % "cycles to the next buffer",
+    ("n" / "<C-p>" / "<cmd>bp<CR>" +silent) % "cycles to the previous buffer",
 
-   ("n" / "<C-h>" / "<C-w>h" +noremap) % "moves to the leftside split",
-   ("n" / "<C-l>" / "<C-w>l" +noremap) % "moves to the rightside split",
+    ("n" / "<C-h>" / "<C-w>h" +noremap) % "moves to the leftside split",
+    ("n" / "<C-l>" / "<C-w>l" +noremap) % "moves to the rightside split",
 
-   ("n" / "<Esc>" / "<cmd>noh<CR>" +silent) % "clears search highlights",
+    ("n" / "<Esc>" / "<cmd>noh<CR>" +silent) % "clears search highlights",
 
-   ("n" / ":" ^ ";" +noremap),
+    ("n" / ":" ^ ";" +noremap),
 }
 
 -- TODO: languages "all"

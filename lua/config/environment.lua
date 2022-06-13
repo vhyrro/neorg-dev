@@ -2,6 +2,11 @@ local environment = require("config.utilities")
 
 environment.state = {}
 environment.plugins = {}
+environment.hooks = {
+    post = {},
+    config_write = {},
+    config_open = {},
+}
 
 environment.require = function(module_path)
     package.loaded[module_path] = nil
@@ -30,6 +35,7 @@ environment.editing = function(options)
     end
 end
 
+-- TODO: Export to user/
 environment.colorscheme = function(path, name)
     environment.state.colourscheme = {
         path = path,
@@ -39,6 +45,7 @@ end
 
 environment.colourscheme = environment.colorscheme
 
+-- TODO: Export
 environment.keybinds = function(keybinds)
     for _, keybind_data in ipairs(keybinds) do
         for _, keymap in ipairs(keybind_data.keymaps) do
@@ -64,11 +71,13 @@ environment.import = function(file_or_prefix)
     end
 
     if ok then
+	module = (module == true and {} or module)
         override_global_metatable(module)
     end
 
     return function(modules)
         for _, module_name in ipairs(modules) do
+            module = (module == true and {} or module)
             module = environment.require(file_or_prefix .. "." .. module_name)
             override_global_metatable(module)
         end
@@ -103,13 +112,18 @@ environment.make_plugin = function(plugin, packer_data)
 end
 
 environment.post = function()
+    for _, hook in ipairs(environment.hooks.post) do
+        hook()
+    end
+
     local augroup = vim.api.nvim_create_augroup("NeorgDev", {})
 
     vim.api.nvim_create_autocmd("BufEnter", {
         group = augroup,
+        pattern = vim.fn.stdpath("config") .. "/user/**.lua",
         callback = function(data)
-            if environment.state.undofile then
-                vim.api.nvim_buf_set_option(data.buf, "undofile", true)
+            for _, hook in ipairs(environment.hooks.config_open) do
+                hook()
             end
         end
     })
@@ -117,7 +131,11 @@ environment.post = function()
     vim.api.nvim_create_autocmd("BufWritePost", {
         group = augroup,
         pattern = vim.fn.stdpath("config") .. "/user/**.lua",
-        callback = function()
+        callback = function(data)
+            for _, hook in ipairs(environment.hooks.config_write) do
+                hook()
+            end
+
             if not _G.packer_plugins then
                 return
             end
