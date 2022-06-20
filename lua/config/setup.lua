@@ -126,12 +126,16 @@ return function(is_fresh_install)
         if isolated_environment.state.colourscheme then
             make_plugin(plugin(isolated_environment.state.colourscheme.name), {
                 isolated_environment.state.colourscheme.path,
-                config = "vim.cmd 'colorscheme " .. isolated_environment.state.colourscheme.name .. "'",
+                config = function()
+                    vim.cmd("colorscheme " .. isolated_environment.state.colourscheme.name)
+                end,
             })
         end
 
         for name, plugin_data in pairs(isolated_environment.plugins) do
-            use(vim.tbl_deep_extend("keep", plugin_data.packer_data, { as = (plugin_data.name ~= name and name) }))
+            local real_plugin_name = plugin_data.packer_data[1]:match("/(.+)$")
+
+            use(vim.tbl_deep_extend("keep", plugin_data.packer_data, { as = (real_plugin_name ~= name and name) }))
         end
 
         if is_fresh_install then

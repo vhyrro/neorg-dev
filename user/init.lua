@@ -1,9 +1,14 @@
+-- TODO: Remove make_plugin and make "plugin" callable with packer data
+
 --> Core Imports
 import "core"
 import "core.integrations"
 
 --> Import
-import "plugins.neorg"
+import "plugins" {
+    "neorg",
+    "gitsigns",
+}
 
 editing {
     indent = 4,
@@ -69,6 +74,9 @@ opt.virtualedit = "block"
 --> Don't autoclose folds
 opt.foldlevel = 999
 
+--> Synchronize the system clipboard and Neovim's clipboard
+opt.clipboard = "unnamedplus"
+
 --> Store undo information persistently under the following directory
 undofile (vim.fn.stdpath("cache") .. "/nvim/undo")
 
@@ -94,7 +102,7 @@ keybinds {
 
     ("n" / "<Esc>" / "<cmd>noh<CR>" +silent) % "clears search highlights",
 
-    ("n" / ":" ^ ";" +noremap),
+    ("nv" / ":" ^ ";" +noremap),
 }
 
 -- TODO: languages "all"
@@ -106,22 +114,37 @@ languages {
 
 neorg_setup {
     path = "~/dev/neorg/",
+    -- treesitter = {
+    --     norg = {
+    --         url = "~/dev/tree-sitter-norg",
+    --     }
+    -- },
 
     modules = {
-        ["core.defaults"] = {},
-        ["core.export"] = {},
-        ["core.export.markdown"] = {
+        ["core.defaults"] = {
             config = {
-                extensions = "all",
+                disable = {
+                    "core.syntax",
+                },
             },
         },
+        ["core.export"] = {},
+        -- ["core.export.markdown"] = {
+        --     config = {
+        --         extensions = "all",
+        --     },
+        -- },
         -- ["core.norg.concealer"] = {},
+        -- ["core.upgrade"] = {},
+        -- ["core.export.norg_from_0_0_10"] = {},
     },
 
     workspaces = {
         main = "~/neorg/",
     },
 }
+
+gitsigns {}
 
 make_plugin(plugin "playground", {
     "nvim-treesitter/playground",

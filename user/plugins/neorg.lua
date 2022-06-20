@@ -28,6 +28,14 @@ return {
             }
         end
 
+        if options.treesitter then
+            options.modules["core.integrations.treesitter"] = {
+                config = {
+                    parser_configs = options.treesitter,
+                }
+            }
+        end
+
         -- Initialize the plugin and its data
         neorg {
             data = options,
@@ -40,7 +48,7 @@ return {
             requires = { "plenary.nvim" },
             config = function()
                 require("neorg").setup({
-                    load = neorg_dev.plugin_data.neorg.modules
+                    load = options.modules
                 })
             end,
         })

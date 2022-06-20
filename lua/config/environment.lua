@@ -89,8 +89,6 @@ environment.plugin = function(name)
         return environment.plugins[name]
     end
 
-    _G.neorg_dev.plugin_data[name] = {}
-
     return setmetatable({
         name = name,
         packer_data = {},
@@ -99,7 +97,6 @@ environment.plugin = function(name)
     }, {
         __call = function(self, data)
             self = vim.tbl_deep_extend("force", self, data)
-            _G.neorg_dev.plugin_data[name] = self.data
             return self
         end,
     })
@@ -108,6 +105,15 @@ end
 environment.make_plugin = function(plugin, packer_data)
     plugin.packer_data = packer_data
     plugin.active = true
+
+    _G.neorg_dev.plugin_data[plugin.name] = vim.deepcopy(packer_data)
+
+    if packer_data.config and type(packer_data.config) == "function" then
+        packer_data.config = function(name, data)
+            _G.neorg_dev.plugin_data[name].config(name, data)
+        end
+    end
+
     environment.plugins[plugin.name] = plugin
 end
 
