@@ -3,23 +3,21 @@ return {
         -- TODO: Make a try_make_plugin or try_plugin function
         -- to abstract this boilerplate
 
-        local plenary = "plenary.nvim"
+        local plenary = plugin "plenary.nvim"
 
         if not plenary.active then
-            make_plugin(plenary, {
+            plenary {
                 "nvim-lua/plenary.nvim",
                 module = "plenary",
-            })
+            }
         end
 
-        local neogit = plugin "neogit" {
-            data = config,
-        }
-
-        make_plugin(neogit, {
+        plugin "neogit" {
+            "TimUntersberger/neogit",
+            requires = { "plenary.nvim" },
             config = function()
-                -- TODO:
+                require("neogit").setup(config)
             end,
-        })
+        }
     end,
 }
