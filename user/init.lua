@@ -1,5 +1,3 @@
--- TODO: Remove make_plugin and make "plugin" callable with packer data
-
 --> Core Imports
 import "core"
 import "core.integrations"
@@ -8,6 +6,7 @@ import "core.integrations"
 import "plugins" {
     "neorg",
     "gitsigns",
+    "neogit",
 }
 
 editing {
@@ -114,11 +113,11 @@ languages {
 
 neorg_setup {
     path = "~/dev/neorg/",
-    -- treesitter = {
-    --     norg = {
-    --         url = "~/dev/tree-sitter-norg",
-    --     }
-    -- },
+    treesitter = {
+        norg = {
+            url = "~/dev/tree-sitter-norg",
+        }
+    },
 
     modules = {
         ["core.defaults"] = {
@@ -146,7 +145,17 @@ neorg_setup {
 
 gitsigns {}
 
-make_plugin(plugin "playground", {
+neogit {
+    keybinds {
+        ("n" / "<Leader>g" / "<cmd>Neogit<CR>") % "activate neogit",
+    },
+}
+
+plugin "playground" {
     "nvim-treesitter/playground",
     cmd = "TSPlaygroundToggle",
-})
+
+    keybinds {
+        ("n" / "<Leader>p" / "<cmd>TSPlaygroundToggle<CR>") % "toggles the TS playground",
+    },
+}

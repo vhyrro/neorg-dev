@@ -114,22 +114,21 @@ return function(is_fresh_install)
     })
 
     packer.startup(function(use)
-        local make_plugin = isolated_environment.make_plugin
         local plugin = isolated_environment.plugin
 
-        make_plugin(plugin "packer.nvim", {
+        plugin "packer.nvim" {
             "wbthomason/packer.nvim",
             opt = true,
-        })
+        }
 
         -- Yes I do indeed spell colourscheme the bri'ish way
         if isolated_environment.state.colourscheme then
-            make_plugin(plugin(isolated_environment.state.colourscheme.name), {
+            plugin(isolated_environment.state.colourscheme.name) {
                 isolated_environment.state.colourscheme.path,
                 config = function()
                     vim.cmd("colorscheme " .. isolated_environment.state.colourscheme.name)
                 end,
-            })
+            }
         end
 
         for name, plugin_data in pairs(isolated_environment.plugins) do

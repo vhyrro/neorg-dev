@@ -47,6 +47,10 @@ environment.colourscheme = environment.colorscheme
 
 -- TODO: Export
 environment.keybinds = function(keybinds)
+    if not keybinds then
+        return
+    end
+
     for _, keybind_data in ipairs(keybinds) do
         for _, keymap in ipairs(keybind_data.keymaps) do
             if keybind_data.swap then
@@ -92,29 +96,24 @@ environment.plugin = function(name)
     return setmetatable({
         name = name,
         packer_data = {},
-        data = {},
         active = false,
     }, {
-        __call = function(self, data)
-            self = vim.tbl_deep_extend("force", self, data)
+        __call = function(self, packer_data)
+            self.packer_data = vim.tbl_deep_extend("force", self.packer_data, packer_data)
+            self.active = true
+
+            _G.neorg_dev.plugin_data[self.name] = vim.deepcopy(packer_data)
+
+            if packer_data.config and type(packer_data.config) == "function" then
+                self.packer_data.config = function(name, data)
+                    _G.neorg_dev.plugin_data[name].config(name, data)
+                end
+            end
+
+            environment.plugins[self.name] = self
             return self
         end,
     })
-end
-
-environment.make_plugin = function(plugin, packer_data)
-    plugin.packer_data = packer_data
-    plugin.active = true
-
-    _G.neorg_dev.plugin_data[plugin.name] = vim.deepcopy(packer_data)
-
-    if packer_data.config and type(packer_data.config) == "function" then
-        packer_data.config = function(name, data)
-            _G.neorg_dev.plugin_data[name].config(name, data)
-        end
-    end
-
-    environment.plugins[plugin.name] = plugin
 end
 
 environment.post = function()

@@ -14,27 +14,19 @@ function module.languages(language_list)
     end
 
     if use_treesitter then
-        local treesitter = plugin "nvim-treesitter" {
-            data = {
-                languages = treesitter_languages,
-            }
-        }
-
-        make_plugin(treesitter, {
+        plugin "nvim-treesitter" {
             "nvim-treesitter/nvim-treesitter",
             run = ":silent! TSUpdate",
             config = function()
-                local language_list = neorg_dev.plugin_data["nvim-treesitter"].languages
-
                 require("nvim-treesitter.configs").setup({
-                    ensure_installed = language_list,
+                    ensure_installed = treesitter_languages,
 
                     highlight = {
                         enable = true,
                     },
                 })
             end,
-        })
+        }
     end
 end
 

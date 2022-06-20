@@ -6,10 +6,10 @@ return {
 
         -- If the plugin is already defined then don't override its data.
         if not plenary.active then
-            make_plugin(plenary, {
+            plenary {
                 "nvim-lua/plenary.nvim",
                 module = "plenary",
-            })
+            }
         end
 
         -- Declare the neorg plugin
@@ -36,13 +36,8 @@ return {
             }
         end
 
-        -- Initialize the plugin and its data
-        neorg {
-            data = options,
-        }
-
         -- Send the packaged plugin to be managed by packer
-        make_plugin(neorg, {
+        neorg {
             options.path or "nvim-neorg/neorg",
             after = "nvim-treesitter",
             requires = { "plenary.nvim" },
@@ -51,6 +46,6 @@ return {
                     load = options.modules
                 })
             end,
-        })
+        }
     end,
 }
