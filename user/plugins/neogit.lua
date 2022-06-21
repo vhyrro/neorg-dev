@@ -15,6 +15,8 @@ return {
         plugin "neogit" {
             "TimUntersberger/neogit",
             requires = { "plenary.nvim" },
+            cmd = "Neogit",
+            module = "neogit",
             config = function()
                 require("neogit").setup(config)
             end,
