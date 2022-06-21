@@ -133,7 +133,7 @@ neorg_setup {
         --         extensions = "all",
         --     },
         -- },
-        -- ["core.norg.concealer"] = {},
+        ["core.norg.concealer"] = {},
         -- ["core.upgrade"] = {},
         -- ["core.export.norg_from_0_0_10"] = {},
     },
