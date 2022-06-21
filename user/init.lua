@@ -7,6 +7,7 @@ import "plugins" {
     "neorg",
     "gitsigns",
     "neogit",
+    "toggleterm",
 }
 
 editing {
@@ -149,6 +150,12 @@ neogit {
     keybinds {
         ("n" / "<Leader>g" / "<cmd>Neogit<CR>") % "activate neogit",
     },
+}
+
+toggleterm {
+    keybinds {
+        ("nt" / "<Leader>t" / function() return "<cmd>" .. tostring(vim.v.count1) .. "ToggleTerm direction=float<CR>" end +expr +silent) % "toggle the terminal",
+    }
 }
 
 plugin "playground" {
