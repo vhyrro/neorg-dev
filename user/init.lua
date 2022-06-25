@@ -78,6 +78,9 @@ opt.foldlevel = 999
 --> Synchronize the system clipboard and Neovim's clipboard
 opt.clipboard = "unnamedplus"
 
+--> Enable full concealing by default
+opt.conceallevel = 2
+
 --> Store undo information persistently under the following directory
 undofile (vim.fn.stdpath("cache") .. "/nvim/undo")
 
