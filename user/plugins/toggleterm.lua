@@ -3,7 +3,7 @@ return {
         plugin "toggleterm.nvim" {
             "akinsho/toggleterm.nvim",
             module = "toggleterm",
-            cmd = "ToggleTerm",
+            cmd = { "ToggleTerm", "TermExec" },
 
             config = function()
                 require("toggleterm").setup(config)

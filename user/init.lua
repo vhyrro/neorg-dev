@@ -155,7 +155,14 @@ neogit {
 
 toggleterm {
     keybinds {
-        ("nt" / "<Leader>t" / function() return "<cmd>" .. tostring(vim.v.count1) .. "ToggleTerm direction=float<CR>" end +expr +silent) % "toggle the terminal",
+        ("n" / "<Leader>t" / function() return "<cmd>" .. tostring(vim.v.count1) .. "ToggleTerm direction=float<CR>" end +expr +silent) % "toggle the terminal",
+        ("t" / "<C-n>" / "<C-\\><C-n>" +noremap) % "moves to normal mode in a terminal view",
+
+        -- Treesitter development related (TODO: move into different section)
+        ("nt" / "<Leader>yg" / [[<cmd>TermExec cmd="tree-sitter generate" direction=float<CR>]]) % "runs the equivalent of 'yarn gen' in a terminal",
+        ("nt" / "<Leader>yp" / [[<cmd>TermExec cmd="tree-sitter parse test.norg" direction=float<CR>]]) % "runs the equivalent of 'yarn parse test.norg' in a terminal",
+        ("nt" / "<Leader>yt" / [[<cmd>TermExec cmd="tree-sitter test" direction=float<CR>]]) % "runs the equivalent of 'yarn test' in a terminal",
+        ("nt" / "<Leader>yd" / [[<cmd>TermExec cmd="tree-sitter parse -d test.norg" direction=float<CR>]]) % "runs the equivalent of 'yarn parse -d test.norg' in a terminal",
     }
 }
 
