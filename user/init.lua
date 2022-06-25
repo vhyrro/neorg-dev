@@ -8,6 +8,7 @@ import "plugins" {
     "gitsigns",
     "neogit",
     "toggleterm",
+    "presence",
 }
 
 editing {
@@ -156,6 +157,12 @@ toggleterm {
     keybinds {
         ("nt" / "<Leader>t" / function() return "<cmd>" .. tostring(vim.v.count1) .. "ToggleTerm direction=float<CR>" end +expr +silent) % "toggle the terminal",
     }
+}
+
+presence {
+    neovim_image_text = "Emacs Sucks Balls, Respectfully",
+    enable_line_number = true,
+    main_image = "file",
 }
 
 plugin "playground" {
