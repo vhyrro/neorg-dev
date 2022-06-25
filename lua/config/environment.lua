@@ -13,11 +13,6 @@ environment.require = function(module_path)
     return require(module_path)
 end
 
-environment.template = function(template_name)
-    -- TODO: Better errors
-    pcall(environment.require, "templates." .. template_name)
-end
-
 environment.editing = function(options)
     local function set_options(keys, value)
         return function()
@@ -34,16 +29,6 @@ environment.editing = function(options)
         }
     end
 end
-
--- TODO: Export to user/
-environment.colorscheme = function(path, name)
-    environment.state.colourscheme = {
-        path = path,
-        name = name,
-    }
-end
-
-environment.colourscheme = environment.colorscheme
 
 -- TODO: Export
 environment.keybinds = function(keybinds)

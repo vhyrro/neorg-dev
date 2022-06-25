@@ -4,3 +4,4 @@ import "core.option_wrappers" {
 
 import "core.languages"
 import "core.hooks"
+import "core.colorscheme"

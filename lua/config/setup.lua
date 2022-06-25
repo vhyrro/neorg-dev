@@ -121,16 +121,6 @@ return function(is_fresh_install)
             opt = true,
         }
 
-        -- Yes I do indeed spell colourscheme the bri'ish way
-        if isolated_environment.state.colourscheme then
-            plugin(isolated_environment.state.colourscheme.name) {
-                isolated_environment.state.colourscheme.path,
-                config = function()
-                    vim.cmd("colorscheme " .. isolated_environment.state.colourscheme.name)
-                end,
-            }
-        end
-
         for name, plugin_data in pairs(isolated_environment.plugins) do
             local real_plugin_name = plugin_data.packer_data[1]:match("/(.+)$")
 
