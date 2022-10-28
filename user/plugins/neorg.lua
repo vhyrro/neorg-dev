@@ -21,11 +21,11 @@ return {
         }
 
         if options.workspaces then
-            options.modules["core.norg.dirman"] = {
+            options.modules["core.norg.dirman"] = vim.tbl_deep_extend("keep", options.modules["core.norg.dirman"] or {}, {
                 config = {
                     workspaces = options.workspaces,
                 }
-            }
+            })
         end
 
         if options.treesitter then

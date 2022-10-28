@@ -24,10 +24,6 @@ end
 
 --> Set up functions specifically made for the user configuration
 
--- Enable filetype.lua / disable filetype.vim
-vim.g.do_filetype_lua = 1
-vim.g.did_load_filetypes = 0
-
 -- Make `user/` part of the lua path
 package.path = package.path .. ";" .. config_path .. "/user/?.lua;" .. config_path .. "/user/?/init.lua;"
 

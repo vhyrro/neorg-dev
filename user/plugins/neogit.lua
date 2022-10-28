@@ -18,7 +18,7 @@ return {
             cmd = "Neogit",
             module = "neogit",
             config = function()
-                require("neogit").setup(config)
+                require("neogit").setup(config or {})
             end,
         }
     end,
