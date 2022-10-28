@@ -269,10 +269,3 @@ plugin "lsp_lines" {
         ("n" / "<Leader>lt" / function() require("lsp_lines").toggle() end) % "toggles `lsp_lines`",
     }
 }
-
-plugin "spellsitter" {
-    "lewis6991/spellsitter.nvim",
-    config = function()
-        require("spellsitter").setup()
-    end,
-}
